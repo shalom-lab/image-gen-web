@@ -38,6 +38,9 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedReply, setSelectedReply] = useState('');
+  const [replyQuery, setReplyQuery] = useState('');
+  const [tokenVisible, setTokenVisible] = useState(false);
+  const [notice, setNotice] = useState('');
   const [records, setRecords] = useState([]);
   const [sourceUrl, setSourceUrl] = useState('');
   const [loading, setLoading] = useState(false);
@@ -47,6 +50,14 @@ function App() {
 
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEYS.token)) loadPrompts();
+  }, []);
+
+  useEffect(() => {
+    function closeOnEscape(event) {
+      if (event.key === 'Escape') setSettingsOpen(false);
+    }
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
   }, []);
 
   const visible = useMemo(() => {
@@ -68,6 +79,11 @@ function App() {
       return keywords;
     }, []);
   }, [records]);
+
+  const visibleReplyKeywords = useMemo(() => {
+    const needle = replyQuery.trim().toLowerCase();
+    return needle ? replyKeywords.filter((keyword) => keyword.toLowerCase().includes(needle)) : replyKeywords;
+  }, [replyKeywords, replyQuery]);
 
   async function loadPrompts(event) {
     event?.preventDefault();
@@ -100,6 +116,10 @@ function App() {
       setSourceUrl(`https://github.com/${repo.trim()}/blob/HEAD/${filePath}`);
       setLoadedAt(new Date().toLocaleString('zh-CN', { hour12: false }));
       setSettingsOpen(false);
+      if (event) {
+        setNotice('设置已保存，数据已更新');
+        window.setTimeout(() => setNotice(''), 2200);
+      }
     } catch (requestError) {
       setRecords([]);
       setError(`${requestError.message}。请检查仓库、路径、分支和 Token 权限。`);
@@ -114,6 +134,13 @@ function App() {
     setTimeout(() => setCopied(null), 1400);
   }
 
+  function clearToken() {
+    localStorage.removeItem(STORAGE_KEYS.token);
+    setToken('');
+    setNotice('本地 Token 已清除');
+    window.setTimeout(() => setNotice(''), 2200);
+  }
+
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -121,13 +148,15 @@ function App() {
         <div className="top-actions"><a className="repo-link" href="https://github.com/shalom-lab/image-gen-web" target="_blank" rel="noreferrer">GitHub</a><button className="settings-button" onClick={() => setSettingsOpen(true)}>设置</button></div>
       </header>
 
-      {settingsOpen && <div className="panel-backdrop" onMouseDown={() => setSettingsOpen(false)}><aside className="settings-panel" onMouseDown={(event) => event.stopPropagation()}><div className="panel-heading"><div><span>设置</span><small>保存在当前浏览器</small></div><button onClick={() => setSettingsOpen(false)} aria-label="关闭">×</button></div><form onSubmit={loadPrompts}><label><span>GitHub 仓库</span><div className="input-wrap"><Sparkles size={16} /><input value={repo} onChange={(event) => setRepo(event.target.value)} placeholder="owner/repository" /></div></label><label><span>GitHub Token</span><div className="input-wrap"><KeyRound size={16} /><input type="password" value={token} onChange={(event) => setToken(event.target.value)} placeholder="github_pat_…" /></div></label><div className="fixed-path"><span>数据文件</span><code>{DEFAULTS.path}</code></div><button className="load-button" type="submit" disabled={loading}>{loading ? <><RefreshCw className="spin" size={17} /> 读取中…</> : '保存并读取'}</button></form></aside></div>}
+      {settingsOpen && <div className="panel-backdrop" onMouseDown={() => setSettingsOpen(false)}><aside className="settings-panel" onMouseDown={(event) => event.stopPropagation()}><div className="panel-heading"><div><span>设置</span><small>保存在当前浏览器 · Esc 关闭</small></div><button onClick={() => setSettingsOpen(false)} aria-label="关闭">×</button></div><form onSubmit={loadPrompts}><label><span>GitHub 仓库</span><div className="input-wrap"><Sparkles size={16} /><input value={repo} onChange={(event) => setRepo(event.target.value)} placeholder="owner/repository" /></div></label><label><span>GitHub Token</span><div className="input-wrap"><KeyRound size={16} /><input type={tokenVisible ? 'text' : 'password'} value={token} onChange={(event) => setToken(event.target.value)} placeholder="github_pat_…" /><button className="token-toggle" type="button" onClick={() => setTokenVisible((visible) => !visible)}>{tokenVisible ? '隐藏' : '显示'}</button></div></label><div className="fixed-path"><span>数据文件</span><code>{DEFAULTS.path}</code></div><button className="load-button" type="submit" disabled={loading}>{loading ? <><RefreshCw className="spin" size={17} /> 读取中…</> : '保存并读取'}</button><button className="clear-token" type="button" onClick={clearToken}>清除本地 Token</button></form></aside></div>}
+
+      {notice && <div className="toast" role="status">{notice}</div>}
 
       {error && <div className="error-box">{error}</div>}
 
       <section className="results-head"><div><div className="section-kicker">COLLECTION</div><h2>{records.length ? `${visible.length} 条提示词` : '提示词库'}</h2></div>{records.length > 0 && <div className="result-tools"><label className="search-box"><Search size={17} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索内容、标签或名称…" /></label><span className="updated">更新于 {loadedAt}</span>{sourceUrl && <a href={sourceUrl} target="_blank" rel="noreferrer" aria-label="在 GitHub 查看源文件"><ExternalLink size={17} /></a>}</div>}</section>
 
-      {replyKeywords.length > 0 && <section className="keyword-cloud"><div className="keyword-cloud-head"><span>回复关键词</span><small>{replyKeywords.length} 个</small>{selectedReply && <button onClick={() => setSelectedReply('')}>清除筛选</button>}</div><div className="keyword-chips">{replyKeywords.map((keyword, index) => <button key={keyword} className={`keyword-chip tone-${index % 8}${selectedReply === keyword ? ' active' : ''}`} onClick={() => setSelectedReply(selectedReply === keyword ? '' : keyword)}>{keyword}</button>)}</div></section>}
+      {replyKeywords.length > 0 && <section className="keyword-cloud"><div className="keyword-cloud-head"><span>回复关键词</span><small>{replyKeywords.length} 个</small><label className="keyword-search"><Search size={14} /><input value={replyQuery} onChange={(event) => setReplyQuery(event.target.value)} placeholder="查找关键词" /></label>{selectedReply && <button onClick={() => setSelectedReply('')}>清除筛选</button>}<button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>回到顶部</button></div><div className="keyword-chips">{visibleReplyKeywords.map((keyword) => { const index = replyKeywords.indexOf(keyword); return <button key={keyword} className={`keyword-chip tone-${index % 8}${selectedReply === keyword ? ' active' : ''}`} onClick={() => setSelectedReply(selectedReply === keyword ? '' : keyword)}>{keyword}</button>; })}</div></section>}
 
       {records.length === 0 && !error && <div className="empty-state"><div className="empty-icon"><Search size={25} /></div><h3>{loading ? '正在读取…' : '还没有数据'}</h3><p>{loading ? '正在从 GitHub 获取提示词。' : '打开右上角设置，填写仓库和 Token。'}</p></div>}
       {records.length > 0 && visible.length === 0 && <div className="empty-state compact"><h3>没有匹配结果</h3><p>试试更短的关键词，或清空搜索框。</p></div>}
