@@ -64,7 +64,7 @@ function App() {
     const needle = query.trim().toLowerCase();
     return records.filter((item) => {
       if (selectedReply && item?.reply_keyword !== selectedReply) return false;
-      return !needle || JSON.stringify(item).toLowerCase().includes(needle);
+      return !needle || item?.reply_keyword?.toLowerCase().includes(needle);
     });
   }, [records, query, selectedReply]);
 
@@ -154,7 +154,7 @@ function App() {
 
       {error && <div className="error-box">{error}</div>}
 
-      <section className="results-head"><div><div className="section-kicker">COLLECTION</div><h2>{records.length ? `${visible.length} 条提示词` : '提示词库'}</h2></div>{records.length > 0 && <div className="result-tools"><label className="search-box"><Search size={17} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索内容、标签或名称…" /></label><span className="updated">更新于 {loadedAt}</span>{sourceUrl && <a href={sourceUrl} target="_blank" rel="noreferrer" aria-label="在 GitHub 查看源文件"><ExternalLink size={17} /></a>}</div>}</section>
+      <section className="results-head"><div><div className="section-kicker">COLLECTION</div><h2>{records.length ? `${visible.length} 条提示词` : '提示词库'}</h2></div>{records.length > 0 && <div className="result-tools"><label className="search-box"><Search size={17} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索回复关键词…" /></label><span className="updated">更新于 {loadedAt}</span>{sourceUrl && <a href={sourceUrl} target="_blank" rel="noreferrer" aria-label="在 GitHub 查看源文件"><ExternalLink size={17} /></a>}</div>}</section>
 
       {replyKeywords.length > 0 && <section className="keyword-cloud"><div className="keyword-cloud-head"><span>回复关键词</span><small>{replyKeywords.length} 个</small><label className="keyword-search"><Search size={14} /><input value={replyQuery} onChange={(event) => setReplyQuery(event.target.value)} placeholder="查找关键词" /></label>{selectedReply && <button onClick={() => setSelectedReply('')}>清除筛选</button>}<button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>回到顶部</button></div><div className="keyword-chips">{visibleReplyKeywords.map((keyword) => { const index = replyKeywords.indexOf(keyword); return <button key={keyword} className={`keyword-chip tone-${index % 8}${selectedReply === keyword ? ' active' : ''}`} onClick={() => setSelectedReply(selectedReply === keyword ? '' : keyword)}>{keyword}</button>; })}</div></section>}
 
