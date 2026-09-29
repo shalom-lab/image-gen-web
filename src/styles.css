@@ -72,13 +72,18 @@ footer { color: #94a3b8; border-color: #e3e7ec; }
 .settings-panel .load-button { margin-top: 6px; justify-content: center; color: #fff; background: #2563eb; }
 .settings-panel .load-button:hover { background: #1d4ed8; }
 .clear-token { border: 0; background: transparent; color: #9b3a3a; font-size: 12px; cursor: pointer; }
-.toast { position: fixed; z-index: 60; right: 24px; bottom: 24px; color: #fff; background: #172033; border-radius: 9px; padding: 11px 15px; box-shadow: 0 12px 35px #17203338; font-size: 13px; }
+.toast { position: fixed; z-index: 60; right: 24px; bottom: 86px; color: #fff; background: #172033; border-radius: 9px; padding: 11px 15px; box-shadow: 0 12px 35px #17203338; font-size: 13px; }
+.back-to-top { position: fixed; z-index: 30; right: 26px; bottom: 26px; width: 48px; height: 48px; display: grid; place-items: center; gap: 0; border: 1px solid #d7deea; border-radius: 50%; color: #fff; background: #2563eb; box-shadow: 0 10px 28px #1d4ed83d; cursor: pointer; animation: back-top-in .18s ease-out; }
+.back-to-top span { margin-top: 3px; font-size: 19px; line-height: 13px; }
+.back-to-top small { font-size: 9px; line-height: 11px; }
+.back-to-top:hover { background: #1d4ed8; transform: translateY(-2px); }
+@keyframes back-top-in { from { opacity: 0; transform: translateY(8px); } }
 .keyword-cloud { height: 270px; margin: 0 0 30px; padding: 20px; display: flex; flex-direction: column; background: #fff; border: 1px solid #e0e5eb; border-radius: 14px; box-shadow: 0 2px 9px #17203308; }
 .keyword-cloud-head { display: flex; align-items: center; gap: 9px; margin-bottom: 15px; }
 .keyword-cloud-head > span { color: #263246; font-size: 14px; font-weight: 800; }
 .keyword-cloud-head small { color: #8b97a7; }
 .keyword-cloud-head button { margin-left: 0; border: 0; background: transparent; color: #2563eb; font-size: 12px; cursor: pointer; }
-.keyword-search { display: flex; align-items: center; gap: 6px; margin-left: auto; color: #94a3b8; border: 1px solid #d9dee6; border-radius: 999px; padding: 0 10px; }
+.keyword-search { display: flex; align-items: center; gap: 6px; margin-left: 14px; margin-right: auto; color: #94a3b8; border: 1px solid #d9dee6; border-radius: 999px; padding: 0 10px; }
 .keyword-search input { width: 150px; border: 0; outline: 0; background: transparent; color: #172033; padding: 7px 0; font-size: 12px; }
 .keyword-chips { display: flex; align-content: flex-start; align-items: center; flex-wrap: wrap; gap: 8px; overflow-y: auto; min-height: 0; padding-right: 8px; scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
 .keyword-chips::-webkit-scrollbar { width: 6px; }

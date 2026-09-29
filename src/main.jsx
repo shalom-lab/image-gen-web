@@ -40,6 +40,7 @@ function App() {
   const [selectedReply, setSelectedReply] = useState('');
   const [tokenVisible, setTokenVisible] = useState(false);
   const [notice, setNotice] = useState('');
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const [records, setRecords] = useState([]);
   const [sourceUrl, setSourceUrl] = useState('');
   const [loading, setLoading] = useState(false);
@@ -57,6 +58,15 @@ function App() {
     }
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
+  }, []);
+
+  useEffect(() => {
+    function updateBackToTop() {
+      setShowBackToTop(window.scrollY > 520);
+    }
+    window.addEventListener('scroll', updateBackToTop, { passive: true });
+    updateBackToTop();
+    return () => window.removeEventListener('scroll', updateBackToTop);
   }, []);
 
   const visible = useMemo(() => {
@@ -150,6 +160,7 @@ function App() {
       {settingsOpen && <div className="panel-backdrop" onMouseDown={() => setSettingsOpen(false)}><aside className="settings-panel" onMouseDown={(event) => event.stopPropagation()}><div className="panel-heading"><div><span>设置</span><small>保存在当前浏览器 · Esc 关闭</small></div><button onClick={() => setSettingsOpen(false)} aria-label="关闭">×</button></div><form onSubmit={loadPrompts}><label><span>GitHub 仓库</span><div className="input-wrap"><Sparkles size={16} /><input value={repo} onChange={(event) => setRepo(event.target.value)} placeholder="owner/repository" /></div></label><label><span>GitHub Token</span><div className="input-wrap"><KeyRound size={16} /><input type={tokenVisible ? 'text' : 'password'} value={token} onChange={(event) => setToken(event.target.value)} placeholder="github_pat_…" /><button className="token-toggle" type="button" onClick={() => setTokenVisible((visible) => !visible)}>{tokenVisible ? '隐藏' : '显示'}</button></div></label><div className="fixed-path"><span>数据文件</span><code>{DEFAULTS.path}</code></div><button className="load-button" type="submit" disabled={loading}>{loading ? <><RefreshCw className="spin" size={17} /> 读取中…</> : '保存并读取'}</button><button className="clear-token" type="button" onClick={clearToken}>清除本地 Token</button></form></aside></div>}
 
       {notice && <div className="toast" role="status">{notice}</div>}
+      {showBackToTop && <button className="back-to-top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="回到顶部"><span>↑</span><small>顶部</small></button>}
 
       {error && <div className="error-box">{error}</div>}
 
