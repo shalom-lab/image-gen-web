@@ -38,7 +38,6 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedReply, setSelectedReply] = useState('');
-  const [replyQuery, setReplyQuery] = useState('');
   const [tokenVisible, setTokenVisible] = useState(false);
   const [notice, setNotice] = useState('');
   const [records, setRecords] = useState([]);
@@ -81,9 +80,9 @@ function App() {
   }, [records]);
 
   const visibleReplyKeywords = useMemo(() => {
-    const needle = replyQuery.trim().toLowerCase();
+    const needle = query.trim().toLowerCase();
     return needle ? replyKeywords.filter((keyword) => keyword.toLowerCase().includes(needle)) : replyKeywords;
-  }, [replyKeywords, replyQuery]);
+  }, [replyKeywords, query]);
 
   async function loadPrompts(event) {
     event?.preventDefault();
@@ -154,9 +153,9 @@ function App() {
 
       {error && <div className="error-box">{error}</div>}
 
-      <section className="results-head"><div><div className="section-kicker">COLLECTION</div><h2>{records.length ? `${visible.length} 条提示词` : '提示词库'}</h2></div>{records.length > 0 && <div className="result-tools"><label className="search-box"><Search size={17} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索回复关键词…" /></label><span className="updated">更新于 {loadedAt}</span>{sourceUrl && <a href={sourceUrl} target="_blank" rel="noreferrer" aria-label="在 GitHub 查看源文件"><ExternalLink size={17} /></a>}</div>}</section>
+      <section className="results-head"><div><div className="section-kicker">COLLECTION</div><h2>{records.length ? `${visible.length} 条提示词` : '提示词库'}</h2></div>{records.length > 0 && <div className="result-tools"><span className="updated">更新于 {loadedAt}</span>{sourceUrl && <a href={sourceUrl} target="_blank" rel="noreferrer" aria-label="在 GitHub 查看源文件"><ExternalLink size={17} /></a>}</div>}</section>
 
-      {replyKeywords.length > 0 && <section className="keyword-cloud"><div className="keyword-cloud-head"><span>回复关键词</span><small>{replyKeywords.length} 个</small><label className="keyword-search"><Search size={14} /><input value={replyQuery} onChange={(event) => setReplyQuery(event.target.value)} placeholder="查找关键词" /></label>{selectedReply && <button onClick={() => setSelectedReply('')}>清除筛选</button>}<button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>回到顶部</button></div><div className="keyword-chips">{visibleReplyKeywords.map((keyword) => { const index = replyKeywords.indexOf(keyword); return <button key={keyword} className={`keyword-chip tone-${index % 8}${selectedReply === keyword ? ' active' : ''}`} onClick={() => setSelectedReply(selectedReply === keyword ? '' : keyword)}>{keyword}</button>; })}</div></section>}
+      {replyKeywords.length > 0 && <section className="keyword-cloud"><div className="keyword-cloud-head"><span>回复关键词</span><small>{replyKeywords.length} 个</small><label className="keyword-search"><Search size={14} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索回复关键词" /></label>{selectedReply && <button onClick={() => setSelectedReply('')}>清除筛选</button>}</div><div className="keyword-chips">{visibleReplyKeywords.map((keyword) => { const index = replyKeywords.indexOf(keyword); return <button key={keyword} className={`keyword-chip tone-${index % 8}${selectedReply === keyword ? ' active' : ''}`} onClick={() => setSelectedReply(selectedReply === keyword ? '' : keyword)}>{keyword}</button>; })}</div></section>}
 
       {records.length === 0 && !error && <div className="empty-state"><div className="empty-icon"><Search size={25} /></div><h3>{loading ? '正在读取…' : '还没有数据'}</h3><p>{loading ? '正在从 GitHub 获取提示词。' : '打开右上角设置，填写仓库和 Token。'}</p></div>}
       {records.length > 0 && visible.length === 0 && <div className="empty-state compact"><h3>没有匹配结果</h3><p>试试更短的关键词，或清空搜索框。</p></div>}
