@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Github, KeyRound, Search, Sparkles, RefreshCw, Copy, Check, ExternalLink, Database, LockKeyhole } from 'lucide-react';
+import { KeyRound, Search, Sparkles, RefreshCw, Copy, Check, ExternalLink, Database, LockKeyhole } from 'lucide-react';
 import './styles.css';
 
 const DEFAULTS = {
@@ -96,7 +96,7 @@ function App() {
     <main className="app-shell">
       <header className="topbar">
         <div className="brand"><span className="brand-mark"><Sparkles size={18} /></span><span>Prompt Atlas</span><span className="pill">BYOK</span></div>
-        <a className="top-link" href="https://github.com" target="_blank" rel="noreferrer"><Github size={16} /> GitHub</a>
+        <a className="top-link" href="https://github.com" target="_blank" rel="noreferrer"><Sparkles size={16} /> GitHub</a>
       </header>
 
       <section className="hero">
@@ -108,7 +108,7 @@ function App() {
       <section className="control-panel">
         <form onSubmit={loadPrompts}>
           <div className="field-grid">
-            <label><span>GitHub 仓库</span><div className="input-wrap"><Github size={16} /><input value={repo} onChange={(e) => setRepo(e.target.value)} placeholder="owner/repository" /></div></label>
+            <label><span>GitHub 仓库</span><div className="input-wrap"><Sparkles size={16} /><input value={repo} onChange={(e) => setRepo(e.target.value)} placeholder="owner/repository" /></div></label>
             <label><span>文件路径</span><div className="input-wrap"><Database size={16} /><input value={filePath} onChange={(e) => setFilePath(e.target.value)} placeholder="data/data_all_prompts.json" /></div></label>
             <label><span>GitHub Token <small>BYOK</small></span><div className="input-wrap"><KeyRound size={16} /><input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="ghp_… / github_pat_…" /></div></label>
           </div>
