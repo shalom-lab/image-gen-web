@@ -37,6 +37,7 @@ function App() {
   const [token, setToken] = useState(() => localStorage.getItem(STORAGE_KEYS.token) || '');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [selectedReply, setSelectedReply] = useState('');
   const [records, setRecords] = useState([]);
   const [sourceUrl, setSourceUrl] = useState('');
   const [loading, setLoading] = useState(false);
@@ -50,9 +51,23 @@ function App() {
 
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    if (!needle) return records;
-    return records.filter((item) => JSON.stringify(item).toLowerCase().includes(needle));
-  }, [records, query]);
+    return records.filter((item) => {
+      if (selectedReply && item?.reply_keyword !== selectedReply) return false;
+      return !needle || JSON.stringify(item).toLowerCase().includes(needle);
+    });
+  }, [records, query, selectedReply]);
+
+  const replyKeywords = useMemo(() => {
+    const seen = new Set();
+    return records.reduce((keywords, item) => {
+      const keyword = item?.reply_keyword?.trim();
+      if (keyword && !seen.has(keyword)) {
+        seen.add(keyword);
+        keywords.push(keyword);
+      }
+      return keywords;
+    }, []);
+  }, [records]);
 
   async function loadPrompts(event) {
     event?.preventDefault();
@@ -81,6 +96,7 @@ function App() {
       }
       const payload = await response.json();
       setRecords(toRecords(payload));
+      setSelectedReply('');
       setSourceUrl(`https://github.com/${repo.trim()}/blob/HEAD/${filePath}`);
       setLoadedAt(new Date().toLocaleString('zh-CN', { hour12: false }));
       setSettingsOpen(false);
@@ -110,6 +126,8 @@ function App() {
       {error && <div className="error-box">{error}</div>}
 
       <section className="results-head"><div><div className="section-kicker">COLLECTION</div><h2>{records.length ? `${visible.length} 条提示词` : '提示词库'}</h2></div>{records.length > 0 && <div className="result-tools"><label className="search-box"><Search size={17} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索内容、标签或名称…" /></label><span className="updated">更新于 {loadedAt}</span>{sourceUrl && <a href={sourceUrl} target="_blank" rel="noreferrer" aria-label="在 GitHub 查看源文件"><ExternalLink size={17} /></a>}</div>}</section>
+
+      {replyKeywords.length > 0 && <section className="keyword-cloud"><div className="keyword-cloud-head"><span>回复关键词</span><small>{replyKeywords.length} 个</small>{selectedReply && <button onClick={() => setSelectedReply('')}>清除筛选</button>}</div><div className="keyword-chips">{replyKeywords.map((keyword, index) => <button key={keyword} className={`keyword-chip tone-${index % 8}${selectedReply === keyword ? ' active' : ''}`} onClick={() => setSelectedReply(selectedReply === keyword ? '' : keyword)}>{keyword}</button>)}</div></section>}
 
       {records.length === 0 && !error && <div className="empty-state"><div className="empty-icon"><Search size={25} /></div><h3>{loading ? '正在读取…' : '还没有数据'}</h3><p>{loading ? '正在从 GitHub 获取提示词。' : '打开右上角设置，填写仓库和 Token。'}</p></div>}
       {records.length > 0 && visible.length === 0 && <div className="empty-state compact"><h3>没有匹配结果</h3><p>试试更短的关键词，或清空搜索框。</p></div>}

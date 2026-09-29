@@ -67,6 +67,24 @@ footer { color: #94a3b8; border-color: #e3e7ec; }
 .fixed-path code { color: #506078; background: #f1f4f7; border-radius: 8px; padding: 12px; font-size: 12px; }
 .settings-panel .load-button { margin-top: 6px; justify-content: center; color: #fff; background: #2563eb; }
 .settings-panel .load-button:hover { background: #1d4ed8; }
+.keyword-cloud { margin: 0 0 30px; padding: 20px; background: #fff; border: 1px solid #e0e5eb; border-radius: 14px; box-shadow: 0 2px 9px #17203308; }
+.keyword-cloud-head { display: flex; align-items: center; gap: 9px; margin-bottom: 15px; }
+.keyword-cloud-head > span { color: #263246; font-size: 14px; font-weight: 800; }
+.keyword-cloud-head small { color: #8b97a7; }
+.keyword-cloud-head button { margin-left: auto; border: 0; background: transparent; color: #2563eb; font-size: 12px; cursor: pointer; }
+.keyword-chips { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.keyword-chip { border: 1px solid transparent; border-radius: 999px; padding: 7px 12px; font-size: 12px; line-height: 1; cursor: pointer; transition: transform .15s, box-shadow .15s, opacity .15s; }
+.keyword-chip:hover { transform: translateY(-1px); box-shadow: 0 3px 8px #17203318; }
+.keyword-chip.active { color: #fff; background: #172033; border-color: #172033; box-shadow: 0 0 0 3px #2563eb2b; }
+.keyword-chip.tone-0 { color: #1d4ed8; background: #eaf1ff; border-color: #c9dafe; }
+.keyword-chip.tone-1 { color: #047857; background: #e5f8f0; border-color: #b9ead7; }
+.keyword-chip.tone-2 { color: #a34b0d; background: #fff1df; border-color: #f5d5ae; }
+.keyword-chip.tone-3 { color: #7e3aac; background: #f5eafb; border-color: #dfc4ee; }
+.keyword-chip.tone-4 { color: #be3a61; background: #ffeaf0; border-color: #f6c7d4; }
+.keyword-chip.tone-5 { color: #0e7490; background: #e5f6fa; border-color: #bae3ec; }
+.keyword-chip.tone-6 { color: #4d5c22; background: #f0f6dc; border-color: #d9e9a9; }
+.keyword-chip.tone-7 { color: #5b55a5; background: #eeedff; border-color: #d1cefa; }
+.keyword-chip.active { color: #fff; background: #172033; border-color: #172033; }
 @keyframes panel-in { from { transform: translateX(24px); opacity: 0; } }
 @media (max-width: 1250px) { .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 900px) { .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
