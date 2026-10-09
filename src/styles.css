@@ -40,7 +40,7 @@ body { background: #f6f7f9; color: #1f2937; }
 .empty-icon { color: #2563eb; background: #edf4ff; }
 .empty-state h3 { color: #273449; }
 .card-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
-.prompt-card { height: 276px; min-height: 0; padding: 14px; background: #fff; border-color: #e0e5eb; box-shadow: 0 2px 9px #1720330a; }
+.prompt-card { width: 100%; height: auto; min-height: 0; aspect-ratio: 1.22 / 1; padding: 14px; background: #fff; border-color: #e0e5eb; box-shadow: 0 2px 9px #1720330a; }
 .prompt-card:hover { border-color: #9bb8ed; box-shadow: 0 10px 25px #17203310; }
 .card-number { color: #2563eb; }
 .date-label { color: #9aa5b5; }
